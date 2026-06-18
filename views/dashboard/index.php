@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* ===== ESTADÍSTICAS ===== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -72,7 +71,6 @@
         .stat-card .stat-change.positive { color: #059669; }
         .stat-card .stat-change.negative { color: #dc2626; }
 
-        /* ===== CONTENIDO PRINCIPAL ===== */
         .dashboard-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -94,7 +92,6 @@
             font-size: 14px;
         }
 
-        /* ===== TABLA DE ÓRDENES RECIENTES ===== */
         .table-container {
             background: white;
             border-radius: 12px;
@@ -125,7 +122,19 @@
             padding: 6px 10px;
         }
 
-        /* ===== GRÁFICOS ===== */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.en_diagnostico { background: #fef3c7; color: #92400e; }
+        .status-badge.en_espera_repuestos { background: #fef3c7; color: #92400e; }
+        .status-badge.en_reparacion { background: #dbeafe; color: #1e40af; }
+        .status-badge.pendiente { background: #fce4ec; color: #b71c1c; }
+        .status-badge.entregado { background: #d1fae5; color: #065f46; }
+
         .chart-wrapper {
             display: flex;
             flex-direction: column;
@@ -159,7 +168,6 @@
             font-size: 11px;
         }
 
-        /* ===== ACTIVIDAD RECIENTE ===== */
         .activity-container {
             max-height: 280px;
             overflow-y: auto;
@@ -215,7 +223,6 @@
             color: #94a3b8;
         }
 
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 992px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -248,9 +255,10 @@
     <div class="main-content">
         <?php include_once 'views/partials/topbar.php'; ?>
 
-        <!-- ===== ESTADÍSTICAS ===== -->
-        <div class="stats-grid">
-            <div class="stat-card">
+                <div class="stats-grid">
+             
+            <!-- tarjetas del Dashboard -->
+            <a href="index.php?controller=orden&action=index" class="stat-card" style="text-decoration: none; color: inherit;">
                 <div class="stat-header">
                     <div>
                         <div class="stat-label">Órdenes Activas</div>
@@ -261,9 +269,9 @@
                 <div class="stat-change positive">
                     <i class="fas fa-arrow-up"></i> <?= $data['cambio_ordenes'] ?? '+0' ?>%
                 </div>
-            </div>
+            </a>
 
-            <div class="stat-card">
+            <a href="index.php?controller=cliente&action=index" class="stat-card" style="text-decoration: none; color: inherit;">
                 <div class="stat-header">
                     <div>
                         <div class="stat-label">Clientes Registrados</div>
@@ -274,9 +282,9 @@
                 <div class="stat-change positive">
                     <i class="fas fa-arrow-up"></i> <?= $data['cambio_clientes'] ?? '+0' ?>%
                 </div>
-            </div>
+            </a>
 
-            <div class="stat-card">
+            <a href="index.php?controller=tecnico&action=index" class="stat-card" style="text-decoration: none; color: inherit;">
                 <div class="stat-header">
                     <div>
                         <div class="stat-label">Técnicos Activos</div>
@@ -287,9 +295,9 @@
                 <div class="stat-change positive">
                     <i class="fas fa-arrow-up"></i> <?= $data['cambio_tecnicos'] ?? '+0' ?>%
                 </div>
-            </div>
+            </a>
 
-            <div class="stat-card">
+            <a href="index.php?controller=repuesto&action=index" class="stat-card" style="text-decoration: none; color: inherit;">
                 <div class="stat-header">
                     <div>
                         <div class="stat-label">Repuestos en Stock</div>
@@ -300,10 +308,8 @@
                 <div class="stat-change positive">
                     <i class="fas fa-arrow-up"></i> <?= $data['cambio_repuestos'] ?? '+0' ?>%
                 </div>
-            </div>
+            </a>
         </div>
-
-        <!-- ===== FILA: ÓRDENES RECIENTES ===== -->
         <div class="card-custom" style="margin-bottom: 20px;">
             <h6><i class="fas fa-clock me-2"></i> Órdenes Recientes</h6>
             <div class="table-container">
@@ -364,9 +370,7 @@
             </div>
         </div>
 
-        <!-- ===== FILA: GRÁFICOS ===== -->
         <div class="dashboard-row">
-            <!-- GRÁFICO 1: DONA - Órdenes por Estado -->
             <div class="card-custom">
                 <h6><i class="fas fa-chart-pie me-2"></i> Órdenes por Estado</h6>
                 <div class="chart-wrapper">
@@ -395,7 +399,6 @@
                 </div>
             </div>
 
-            <!-- GRÁFICO 2: BARRAS - Resumen de Órdenes -->
             <div class="card-custom">
                 <h6><i class="fas fa-chart-bar me-2"></i> Resumen de Órdenes</h6>
                 <div class="chart-wrapper">
@@ -415,99 +418,113 @@
         </div>
     </div>
 
-    <!-- ===== SCRIPTS ===== -->
     <script>
-    <?php 
-        $estados = [];
-        $cantidades = [];
-        $colores = [];
-        
-        if (!empty($data['datos_grafico'])) {
-            foreach ($data['datos_grafico'] as $item) {
-                $estados[] = str_replace('_', ' ', $item['estado']);
-                $estados[count($estados)-1] = str_replace('en ', '', $estados[count($estados)-1]);
-                $cantidades[] = $item['cantidad'];
-                
-                switch ($item['estado']) {
-                    case 'en_diagnostico': $colores[] = '#f59e0b'; break;
-                    case 'en_reparacion': $colores[] = '#3b82f6'; break;
-                    case 'pendiente': $colores[] = '#ef4444'; break;
-                    case 'entregado': $colores[] = '#10b981'; break;
-                    default: $colores[] = '#8b5cf6';
-                }
-            }
-        }
-    ?>
-
-    // GRÁFICO 1: DONA - Órdenes por Estado
-    new Chart(document.getElementById('chartOrdenes').getContext('2d'), {
-        type: 'doughnut',
-        data: {
-            labels: <?= json_encode($estados) ?>,
-            datasets: [{
-                data: <?= json_encode($cantidades) ?>,
-                backgroundColor: <?= json_encode($colores) ?>,
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            cutout: '65%',
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        boxWidth: 10,
-                        padding: 8,
-                        font: { size: 10 }
+        <?php 
+            $estados = [];
+            $cantidades = [];
+            $colores = [];
+            
+            if (!empty($data['datos_grafico'])) {
+                foreach ($data['datos_grafico'] as $item) {
+                    $estados[] = str_replace('_', ' ', $item['estado']);
+                    $estados[count($estados)-1] = str_replace('en ', '', $estados[count($estados)-1]);
+                    $cantidades[] = $item['cantidad'];
+                    
+                    switch ($item['estado']) {
+                        case 'en_diagnostico': $colores[] = '#f59e0b'; break;
+                        case 'en_reparacion': $colores[] = '#3b82f6'; break;
+                        case 'pendiente': $colores[] = '#ef4444'; break;
+                        case 'entregado': $colores[] = '#10b981'; break;
+                        default: $colores[] = '#8b5cf6';
                     }
                 }
             }
-        }
-    });
+        ?>
 
-    // GRÁFICO 2: BARRAS HORIZONTALES - Resumen de Órdenes
-    new Chart(document.getElementById('chartResumen').getContext('2d'), {
-        type: 'bar',
-        data: {
-            labels: ['Últimos 7 días', 'Total'],
-            datasets: [{
-                data: [
-                    <?= $data['ordenes_7dias'] ?? 0 ?>, 
-                    <?= $data['total_ordenes'] ?? 0 ?>
-                ],
-                backgroundColor: ['#3b82f6', '#10b981'],
-                borderRadius: 6,
-                barThickness: 30
-            }]
-        },
-        options: {
-            indexAxis: 'y',  // ← BARRAS HORIZONTALES
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    display: false
-                }
+        new Chart(document.getElementById('chartOrdenes').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: <?= json_encode($estados) ?>,
+                datasets: [{
+                    data: <?= json_encode($cantidades) ?>,
+                    backgroundColor: <?= json_encode($colores) ?>,
+                    borderWidth: 0
+                }]
             },
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1,
-                        font: { size: 10 }
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 10,
+                            padding: 8,
+                            font: { size: 10 }
+                        }
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('chartResumen').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Últimos 7 días', 'Total'],
+                datasets: [{
+                    data: [
+                        <?= $data['ordenes_7dias'] ?? 0 ?>, 
+                        <?= $data['total_ordenes'] ?? 0 ?>
+                    ],
+                    backgroundColor: ['#3b82f6', '#10b981'],
+                    borderRadius: 6,
+                    barThickness: 30
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
                     }
                 },
-                y: {
-                    ticks: {
-                        font: { size: 12 }
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            font: { size: 10 }
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            font: { size: 12 }
+                        }
                     }
                 }
             }
+        });
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('show');
         }
-    });
-</script>
+
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.menu-toggle');
+            const overlay = document.getElementById('overlay');
+            if (window.innerWidth <= 992) {
+                if (sidebar && !sidebar.contains(event.target) && toggle && !toggle.contains(event.target)) {
+                    sidebar.classList.remove('open');
+                    if (overlay) overlay.classList.remove('show');
+                }
+            }
+        });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/menu.js"></script>
