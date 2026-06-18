@@ -27,7 +27,7 @@ class RepuestoController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
                 'nombre' => trim($_POST['nombre'] ?? ''),
-                'precio_unitario' => str_replace(',', '', $_POST['precio_unitario'] ?? 0),
+               'precio_unitario' => floatval(str_replace('.', '', str_replace(',', '', $_POST['precio_unitario'] ?? 0))),
                 'stock' => intval($_POST['stock'] ?? 0)
             ];
 
@@ -73,7 +73,7 @@ class RepuestoController {
             
             $data = [
                 'nombre' => trim($_POST['nombre'] ?? ''),
-                'precio_unitario' => str_replace(',', '', $_POST['precio_unitario'] ?? 0),
+                'precio_unitario' => floatval(str_replace('.', '', str_replace(',', '', $_POST['precio_unitario'] ?? 0))),
                 'stock' => intval($_POST['stock'] ?? 0)
             ];
 

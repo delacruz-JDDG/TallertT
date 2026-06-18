@@ -67,6 +67,14 @@
     <div class="main-content">
         <?php include_once 'views/partials/topbar.php'; ?>
 
+        <?php if (isset($_SESSION['success'])): ?>
+    <div class="alert alert-success alert-dismissible fade show">
+        <i class="fas fa-check-circle me-2"></i> <?= $_SESSION['success'] ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <?php unset($_SESSION['success']); ?>
+<?php endif; ?>
+
         <div class="page-header">
             <div>
                 <h2>

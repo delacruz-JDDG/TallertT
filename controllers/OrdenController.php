@@ -77,7 +77,7 @@ class OrdenController {
                 'id_tecnico' => $_POST['id_tecnico'] ?? 0,
                 'sintoma' => trim($_POST['sintoma'] ?? ''),
                 'estado' => 'en_diagnostico',
-                'mano_obra' => str_replace(',', '', $_POST['mano_obra'] ?? 0),
+                'mano_obra' => floatval(str_replace('.', '', str_replace(',', '', $_POST['mano_obra'] ?? 0))),
                 'total' => 0
             ];
 
@@ -144,7 +144,7 @@ class OrdenController {
                 'id_equipo' => $_POST['id_equipo'] ?? 0,
                 'id_tecnico' => $_POST['id_tecnico'] ?? 0,
                 'sintoma' => trim($_POST['sintoma'] ?? ''),
-                'mano_obra' => str_replace(',', '', $_POST['mano_obra'] ?? 0)
+                'mano_obra' => floatval(str_replace('.', '', str_replace(',', '', $_POST['mano_obra'] ?? 0))),
             ];
 
             $errores = $this->validar($data, $id);
@@ -257,7 +257,7 @@ class OrdenController {
         
         if (!$orden) {
             $_SESSION['error'] = 'Orden no encontrada';
-            header('Location: index.php?controller=orden&action=index');
+            header('Location: index.php?controller=orden&action=edit&id=' . $id);
             exit;
         }
         
@@ -273,7 +273,7 @@ class OrdenController {
         $orden = $this->ordenModel->getById($id);
         if ($orden && $orden['estado'] == 'entregado') {
             $_SESSION['error'] = 'No se puede eliminar una orden entregada';
-            header('Location: index.php?controller=orden&action=index');
+            header('Location: index.php?controller=orden&action=edit&id=' . $id);
             exit;
         }
         
@@ -294,7 +294,7 @@ class OrdenController {
             $_SESSION['error'] = 'Error al eliminar la orden: ' . $e->getMessage();
         }
         
-        header('Location: index.php?controller=orden&action=index');
+        header('Location: index.php?controller=orden&action=edit&id=' . $id);
         exit;
     }
 
