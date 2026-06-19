@@ -82,6 +82,7 @@
                         <label for="nombre" class="form-label required">Nombre completo</label>
                         <input type="text" name="nombre" id="nombre" 
                                class="form-control <?= isset($_SESSION['errores']['nombre']) ? 'is-invalid' : '' ?>"
+                               onkeypress="return soloLetras(event)"
                                value="<?= htmlspecialchars($_SESSION['old']['nombre'] ?? $cliente['nombre'] ?? '') ?>"
                                placeholder="Ej: Juan Pérez" required>
                         <?php if (isset($_SESSION['errores']['nombre'])): ?>
@@ -104,6 +105,8 @@
                         <label for="telefono" class="form-label required">Teléfono</label>
                         <input type="text" name="telefono" id="telefono" 
                                class="form-control <?= isset($_SESSION['errores']['telefono']) ? 'is-invalid' : '' ?>"
+                               maxlength="15"
+                               onkeypress="return soloNumeros(event)"
                                value="<?= htmlspecialchars($_SESSION['old']['telefono'] ?? $cliente['telefono'] ?? '') ?>"
                                placeholder="3001234567" required>
                         <?php if (isset($_SESSION['errores']['telefono'])): ?>
@@ -145,6 +148,23 @@
     </div>
 
     <?php unset($_SESSION['old']); ?>
+
+    /*Función que permite solo letras y espacios en un campo de texto*/ 
+    <script>
+    function soloLetras(e) {
+        var key = e.keyCode || e.which;
+        var tecla = String.fromCharCode(key);
+        var permitidas = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/;
+        return permitidas.test(tecla);
+    }
+    /*Función que permite solo números en un campo de texto */                      
+    function soloNumeros(e) {
+        var key = e.keyCode || e.which;
+        var tecla = String.fromCharCode(key);
+        var numeros = /^[0-9]$/;
+        return numeros.test(tecla);
+    }
+</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/menu.js"></script>
 </body>
