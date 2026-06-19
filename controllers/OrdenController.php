@@ -76,9 +76,10 @@ class OrdenController {
                 'id_equipo' => $_POST['id_equipo'] ?? 0,
                 'id_tecnico' => $_POST['id_tecnico'] ?? 0,
                 'sintoma' => trim($_POST['sintoma'] ?? ''),
-                'estado' => 'en_diagnostico',
+                'estado' => $_POST['estado'] ?? 'en_diagnostico', 
                 'mano_obra' => floatval(str_replace('.', '', str_replace(',', '', $_POST['mano_obra'] ?? 0))),
-                'total' => 0
+                'estado' => $_POST['estado'] ?? 'en_diagnostico'
+
             ];
 
             $errores = $this->validar($data);
@@ -134,60 +135,57 @@ class OrdenController {
 
     // Actualizar orden
     public function update() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = $_POST['id'] ?? 0;
-            
-            // Obtener datos actuales para validar estado
-            $orden_actual = $this->ordenModel->getById($id);
-            
-            $data = [
-                'id_equipo' => $_POST['id_equipo'] ?? 0,
-                'id_tecnico' => $_POST['id_tecnico'] ?? 0,
-                'sintoma' => trim($_POST['sintoma'] ?? ''),
-                'mano_obra' => floatval(str_replace('.', '', str_replace(',', '', $_POST['mano_obra'] ?? 0))),
-            ];
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $id = $_POST['id'] ?? 0;
+        
+        $orden_actual = $this->ordenModel->getById($id);
+        
+        $data = [
+            'id_equipo' => $_POST['id_equipo'] ?? 0,
+            'id_tecnico' => $_POST['id_tecnico'] ?? 0,
+            'sintoma' => trim($_POST['sintoma'] ?? ''),
+            'mano_obra' => floatval(str_replace('.', '', str_replace(',', '', $_POST['mano_obra'] ?? 0))),
+            'estado' => $_POST['estado'] ?? 'en_diagnostico'
+        ];
 
-            $errores = $this->validar($data, $id);
+        $errores = $this->validar($data, $id);
 
-            if (empty($errores)) {
-                try {
-                    // Verificar si cambió el equipo y si tiene orden activa
-                    if ($data['id_equipo'] != $orden_actual['id_equipo']) {
-                        if ($this->ordenModel->equipoTieneOrdenActiva($data['id_equipo'], $id)) {
-                            $_SESSION['error'] = 'El equipo ya tiene otra orden activa';
-                            header('Location: index.php?controller=orden&action=edit&id=' . $id);
-                            exit;
-                        }
+        if (empty($errores)) {
+            try {
+                if ($data['id_equipo'] != $orden_actual['id_equipo']) {
+                    if ($this->ordenModel->equipoTieneOrdenActiva($data['id_equipo'], $id)) {
+                        $_SESSION['error'] = 'El equipo ya tiene otra orden activa';
+                        header('Location: index.php?controller=orden&action=edit&id=' . $id);
+                        exit;
                     }
-                    
-                    // Actualizar solo campos editables
-                    $update_data = [
-                        'id_equipo' => $data['id_equipo'],
-                        'id_tecnico' => $data['id_tecnico'],
-                        'sintoma' => $data['sintoma'],
-                        'mano_obra' => $data['mano_obra']
-                    ];
-                    
-                    $this->ordenModel->update($id, $update_data);
-                    
-                    // Recalcular total
-                    $this->ordenModel->recalcularTotal($id);
-                    
-                    $_SESSION['success'] = 'Orden actualizada exitosamente';
-                    header('Location: index.php?controller=orden&action=edit&id=' . $id);
-                    exit;
-                } catch (Exception $e) {
-                    $_SESSION['error'] = 'Error al actualizar la orden: ' . $e->getMessage();
                 }
-            } else {
-                $_SESSION['errores'] = $errores;
-                $_SESSION['old'] = $data;
+                
+                $update_data = [
+                    'id_equipo' => $data['id_equipo'],
+                    'id_tecnico' => $data['id_tecnico'],
+                    'sintoma' => $data['sintoma'],
+                    'mano_obra' => $data['mano_obra'],
+                    'estado' => $data['estado']
+                ];
+                
+                $this->ordenModel->update($id, $update_data);
+                $this->ordenModel->recalcularTotal($id);
+                
+                $_SESSION['success'] = 'Orden actualizada exitosamente';
+                header('Location: index.php?controller=orden&action=edit&id=' . $id);
+                exit;
+            } catch (Exception $e) {
+                $_SESSION['error'] = 'Error al actualizar la orden: ' . $e->getMessage();
             }
-            
-            header('Location: index.php?controller=orden&action=edit&id=' . $id);
-            exit;
+        } else {
+            $_SESSION['errores'] = $errores;
+            $_SESSION['old'] = $data;
         }
+        
+        header('Location: index.php?controller=orden&action=edit&id=' . $id);
+        exit;
     }
+}
 
     // Cambiar estado de la orden
     public function cambiarEstado() {
@@ -280,11 +278,8 @@ class OrdenController {
         // Si tiene repuestos, devolverlos al stock
         $repuestos = $this->ordenModel->getRepuestosOrden($id);
         foreach ($repuestos as $repuesto) {
-            $this->repuestoModel->actualizarStock(
-                $repuesto['id_repuesto'], 
-                $repuesto['cantidad'], 
-                'sumar'
-            );
+           $this->repuestoModel->actualizarStock($repuesto['id_repuesto'], $repuesto['cantidad'], 'sumar');
+    
         }
         
         try {

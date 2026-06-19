@@ -177,23 +177,17 @@
 
                             <?php if (isset($orden)): ?>
                                 <div class="col-12">
-                                    <label class="form-label">Estado actual</label>
-                                    <div>
-                                        <span class="status-badge <?= str_replace(' ', '_', $orden['estado']) ?>">
-                                            <?php
-                                                $estados = [
-                                                    'en_diagnostico' => 'En diagnóstico',
-                                                    'en_espera_repuestos' => 'En espera de repuestos',
-                                                    'en_reparacion' => 'En reparación',
-                                                    'pendiente' => 'Pendiente',
-                                                    'entregado' => 'Entregado'
-                                                ];
-                                                echo $estados[$orden['estado']] ?? $orden['estado'];
-                                            ?>
-                                        </span>
-                                    </div>
+                                    <label for="estado" class="form-label">Cambiar estado</label>
+                                    <select name="estado" id="estado" class="form-select">
+                                        <option value="en_diagnostico" <?= $orden['estado'] == 'en_diagnostico' ? 'selected' : '' ?>>En diagnóstico</option>
+                                        <option value="en_espera_repuestos" <?= $orden['estado'] == 'en_espera_repuestos' ? 'selected' : '' ?>>En espera de repuestos</option>
+                                        <option value="en_reparacion" <?= $orden['estado'] == 'en_reparacion' ? 'selected' : '' ?>>En reparación</option>
+                                        <option value="pendiente" <?= $orden['estado'] == 'pendiente' ? 'selected' : '' ?>>Pendiente</option>
+                                        <option value="entregado" <?= $orden['estado'] == 'entregado' ? 'selected' : '' ?>>Entregado</option>
+                                    </select>
+                                    <small class="text-muted">Selecciona el nuevo estado de la orden</small>
                                 </div>
-                            <?php endif; ?>
+                            <?php endif; ?> 
 
                             <div class="col-12 d-flex gap-2 mt-3">
                                 <button type="submit" class="btn btn-primary">
