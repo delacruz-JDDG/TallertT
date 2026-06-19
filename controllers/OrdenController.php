@@ -103,17 +103,19 @@ class OrdenController {
                     exit;
                 } catch (Exception $e) {
                     $_SESSION['error'] = 'Error al crear la orden: ' . $e->getMessage();
+                    header('Location: index.php?controller=orden&action=create');
+                    exit;
                 }
             } else {
                 $_SESSION['errores'] = $errores;
                 $_SESSION['old'] = $data;
-            }
-            
-            header('Location: index.php?controller=orden&action=create');
+                header('Location: index.php?controller=orden&action=create');
             exit;
-        }
-    }
-
+             }
+          }
+     }
+        
+        
     // Mostrar formulario para editar orden
     public function edit() {
         $id = $_GET['id'] ?? 0;
