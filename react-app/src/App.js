@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import Layout from './components/Layout';
+import Clientes from './pages/Clientes';
 import './App.css';
 
 function PaginaPrueba({ titulo }) {
@@ -44,10 +45,12 @@ function App() {
                 } />
 
                 <Route path="/clientes" element={
-                    <RutaProtegida>
-                        <PaginaPrueba titulo="Clientes" />
-                    </RutaProtegida>
-                } />
+                      <RutaProtegida>
+                          <Layout>
+                              <Clientes />
+                          </Layout>
+                      </RutaProtegida>
+                  } />
 
                 <Route path="/tecnicos" element={
                     <RutaProtegida>
