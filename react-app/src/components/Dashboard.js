@@ -153,7 +153,22 @@ function Dashboard() {
             minHeight: '100vh',
             fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif'
         },
-        topBar: {
+          pageHeader: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '25px',
+            flexWrap: 'wrap',
+            gap: '10px'
+        },
+        pageTitle: {
+            fontWeight: '700',
+            color: '#1e293b',
+            fontSize: '24px'
+        },
+        pageTitleIcon: { color: '#4f46e5', marginRight: '10px' },
+        pageSubtitle: { fontSize: '14px', color: '#64748b', display: 'block', marginTop: '4px' },
+            topBar: {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -367,6 +382,16 @@ function Dashboard() {
 
    return (
     <div style={styles.container}>
+        {/* PAGE HEADER */}
+        <div style={styles.pageHeader}>
+            <div>
+                <h2 style={styles.pageTitle}>
+                    <i className="fas fa-th-large" style={styles.pageTitleIcon}></i>
+                    Dashboard
+                </h2>
+                <p style={styles.pageSubtitle}>Bienvenido, {usuario?.nombre || 'admin'}</p>
+            </div>
+        </div>
         {/* TARJETAS CON COLORES */}
         <div style={styles.statsGrid}>
             {/* Órdenes Activas - AZUL */}
