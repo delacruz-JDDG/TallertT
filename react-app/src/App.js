@@ -5,6 +5,11 @@ import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import Layout from './components/Layout';
 import Clientes from './pages/Clientes';
+import Tecnicos from './pages/Tecnicos';
+import Equipos from './pages/Equipos';
+import Repuestos from './pages/Repuestos';
+import Ordenes from './pages/Ordenes';
+import Reportes from './pages/Reportes';
 import './App.css';
 
 function PaginaPrueba({ titulo }) {
@@ -54,31 +59,41 @@ function App() {
 
                 <Route path="/tecnicos" element={
                     <RutaProtegida>
-                        <PaginaPrueba titulo="Técnicos" />
+                        <Layout>
+                            <Tecnicos />
+                        </Layout>
                     </RutaProtegida>
                 } />
 
                 <Route path="/equipos" element={
                     <RutaProtegida>
-                        <PaginaPrueba titulo="Equipos" />
+                        <Layout>
+                            <Equipos />
+                        </Layout>
                     </RutaProtegida>
                 } />
 
                 <Route path="/repuestos" element={
                     <RutaProtegida>
-                        <PaginaPrueba titulo="Repuestos" />
+                        <Layout>
+                            <Repuestos />
+                        </Layout>
                     </RutaProtegida>
                 } />
 
                 <Route path="/ordenes" element={
                     <RutaProtegida>
-                        <PaginaPrueba titulo="Órdenes" />
+                        <Layout>
+                            <Ordenes />
+                        </Layout>
                     </RutaProtegida>
                 } />
 
                 <Route path="/reportes" element={
                     <RutaProtegida>
-                        <PaginaPrueba titulo="Reportes" />
+                        <Layout>
+                            <Reportes />
+                        </Layout>
                     </RutaProtegida>
                 } />
 
