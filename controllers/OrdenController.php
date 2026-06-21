@@ -110,7 +110,7 @@ class OrdenController {
                 $_SESSION['errores'] = $errores;
                 $_SESSION['old'] = $data;
                 header('Location: index.php?controller=orden&action=create');
-            exit;
+                exit;
              }
           }
      }

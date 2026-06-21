@@ -1,5 +1,3 @@
-// assets/js/menu.js - Control del menú hamburguesa
-
 // Función para abrir/cerrar el sidebar
 function toggleSidebar() {
     var sidebar = document.getElementById('sidebar');
