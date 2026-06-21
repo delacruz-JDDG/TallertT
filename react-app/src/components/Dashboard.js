@@ -1,5 +1,5 @@
 // src/components/Dashboard.js
-// Dashboard completo con colores de la imagen y gráficas sin scroll
+// Dashboard completo con gráficos y datos reales
 
 import React, { useEffect, useState } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js';
@@ -71,6 +71,7 @@ function Dashboard() {
                 stock_repuestos: stockTotal
             });
 
+            // Últimas 5 órdenes
             setOrdenesRecientes(ordenes.slice(0, 5));
             setLoading(false);
         } catch (error) {
@@ -84,6 +85,15 @@ function Dashboard() {
         window.location.href = '/';
     };
 
+    const estadosTexto = {
+        'en_diagnostico': 'En diagnóstico',
+        'en_espera_repuestos': 'En espera de repuestos',
+        'en_reparacion': 'En reparación',
+        'pendiente': 'Pendiente',
+        'entregado': 'Entregado'
+    };
+
+    // ===== CONFIGURACIÓN GRÁFICOS =====
     const doughnutData = {
         labels: datosGrafico.labels,
         datasets: [{
@@ -96,14 +106,14 @@ function Dashboard() {
     const doughnutOptions = {
         responsive: true,
         maintainAspectRatio: true,
-        cutout: '65%',
+        cutout: '60%',
         plugins: {
             legend: {
-                position: 'bottom',
+                position: 'right',
                 labels: {
-                    boxWidth: 12,
+                    boxWidth: 14,
                     padding: 10,
-                    font: { size: 11 }
+                    font: { size: 12 }
                 }
             }
         }
@@ -115,7 +125,7 @@ function Dashboard() {
             data: [7, 18],
             backgroundColor: ['#3b82f6', '#10b981'],
             borderRadius: 6,
-            barThickness: 25
+            barThickness: 35
         }]
     };
 
@@ -129,20 +139,12 @@ function Dashboard() {
         scales: {
             x: {
                 beginAtZero: true,
-                ticks: { stepSize: 1, font: { size: 10 } }
+                ticks: { stepSize: 1, font: { size: 11 } }
             },
             y: {
-                ticks: { font: { size: 11 } }
+                ticks: { font: { size: 13 } }
             }
         }
-    };
-
-    const estadosTexto = {
-        'en_diagnostico': 'En diagnóstico',
-        'en_espera_repuestos': 'En espera',
-        'en_reparacion': 'En reparación',
-        'pendiente': 'Pendiente',
-        'entregado': 'Entregado'
     };
 
     // ===== ESTILOS =====
@@ -153,22 +155,7 @@ function Dashboard() {
             minHeight: '100vh',
             fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif'
         },
-          pageHeader: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '25px',
-            flexWrap: 'wrap',
-            gap: '10px'
-        },
-        pageTitle: {
-            fontWeight: '700',
-            color: '#1e293b',
-            fontSize: '24px'
-        },
-        pageTitleIcon: { color: '#4f46e5', marginRight: '10px' },
-        pageSubtitle: { fontSize: '14px', color: '#64748b', display: 'block', marginTop: '4px' },
-            topBar: {
+        topBar: {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -318,54 +305,58 @@ function Dashboard() {
         bottomGrid: {
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
-            gap: '20px',
-            marginTop: '20px'
+            gap: '25px',
+            marginTop: '20px',
+            alignItems: 'stretch'
         },
         cardCustom: {
             background: 'white',
             borderRadius: '12px',
-            padding: '15px 18px',
+            padding: '18px 20px',
             border: '1px solid #e2e8f0',
             height: 'auto',
-            minHeight: '200px'
+            minHeight: '300px',
+            display: 'flex',
+            flexDirection: 'column'
         },
         cardTitle: {
             fontWeight: '600',
             color: '#0f172a',
-            marginBottom: '8px',
+            marginBottom: '12px',
             fontSize: '14px'
         },
         chartWrapper: {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            height: 'auto'
+            justifyContent: 'center',
+            flex: 1
         },
         chartContainer: {
-            maxHeight: '120px',
-            height: '120px',
+            maxHeight: '250px',
+            height: '250px',
             width: '100%',
-            maxWidth: '200px',
+            maxWidth: '280px',
             margin: '0 auto'
         },
         chartStats: {
             display: 'flex',
-            justifyContent: 'space-around',
-            marginTop: '6px',
+            justifyContent: 'center',
+            gap: '20px',
+            marginTop: '10px',
             width: '100%',
-            flexWrap: 'wrap',
-            gap: '4px'
+            flexWrap: 'wrap'
         },
         chartStatItem: {
             textAlign: 'center'
         },
         chartStatNumber: {
-            fontSize: '14px',
+            fontSize: '16px',
             fontWeight: '700'
         },
         chartStatLabel: {
             color: '#64748b',
-            fontSize: '10px'
+            fontSize: '11px'
         }
     };
 
@@ -380,191 +371,179 @@ function Dashboard() {
         );
     }
 
-   return (
-    <div style={styles.container}>
-        {/* PAGE HEADER */}
-        <div style={styles.pageHeader}>
-            <div>
-                <h2 style={styles.pageTitle}>
-                    <i className="fas fa-th-large" style={styles.pageTitleIcon}></i>
-                    Dashboard
-                </h2>
-                <p style={styles.pageSubtitle}>Bienvenido, {usuario?.nombre || 'admin'}</p>
-            </div>
-        </div>
-        {/* TARJETAS CON COLORES */}
-        <div style={styles.statsGrid}>
-            {/* Órdenes Activas - AZUL */}
-            <div style={styles.statCard('#dbeafe')}>
-                <div style={styles.statHeader}>
-                    <div>
-                        <div style={styles.statLabel}>Órdenes Activas</div>
-                        <div style={{ ...styles.statNumber, color: '#2563eb' }}>{estadisticas.ordenes_activas}</div>
+    return (
+        <div style={styles.container}>
+            {/* TARJETAS CON COLORES */}
+            <div style={styles.statsGrid}>
+                <div style={styles.statCard('#dbeafe')}>
+                    <div style={styles.statHeader}>
+                        <div>
+                            <div style={styles.statLabel}>Órdenes Activas</div>
+                            <div style={{ ...styles.statNumber, color: '#2563eb' }}>{estadisticas.ordenes_activas}</div>
+                        </div>
+                        <div style={{ ...styles.statIcon, color: '#2563eb' }}>
+                            <i className="fas fa-clipboard-list"></i>
+                        </div>
                     </div>
-                    <div style={{ ...styles.statIcon, color: '#2563eb' }}>
-                        <i className="fas fa-clipboard-list"></i>
+                    <div style={{ ...styles.statChange, color: '#2563eb' }}>
+                        <i className="fas fa-arrow-up"></i> +12% desde la semana pasada
                     </div>
                 </div>
-                <div style={{ ...styles.statChange, color: '#2563eb' }}>
-                    <i className="fas fa-arrow-up"></i> +12% desde la semana pasada
+
+                <div style={styles.statCard('#d1fae5')}>
+                    <div style={styles.statHeader}>
+                        <div>
+                            <div style={styles.statLabel}>Clientes Registrados</div>
+                            <div style={{ ...styles.statNumber, color: '#059669' }}>{estadisticas.total_clientes}</div>
+                        </div>
+                        <div style={{ ...styles.statIcon, color: '#059669' }}>
+                            <i className="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div style={{ ...styles.statChange, color: '#059669' }}>
+                        <i className="fas fa-arrow-up"></i> +8% desde la semana pasada
+                    </div>
+                </div>
+
+                <div style={styles.statCard('#ede9fe')}>
+                    <div style={styles.statHeader}>
+                        <div>
+                            <div style={styles.statLabel}>Técnicos Activos</div>
+                            <div style={{ ...styles.statNumber, color: '#7c3aed' }}>{estadisticas.tecnicos_activos}</div>
+                        </div>
+                        <div style={{ ...styles.statIcon, color: '#7c3aed' }}>
+                            <i className="fas fa-user-cog"></i>
+                        </div>
+                    </div>
+                    <div style={{ ...styles.statChange, color: '#7c3aed' }}>
+                        <i className="fas fa-arrow-up"></i> +5% desde la semana pasada
+                    </div>
+                </div>
+
+                <div style={styles.statCard('#fef3c7')}>
+                    <div style={styles.statHeader}>
+                        <div>
+                            <div style={styles.statLabel}>Repuestos en Stock</div>
+                            <div style={{ ...styles.statNumber, color: '#d97706' }}>{estadisticas.stock_repuestos}</div>
+                        </div>
+                        <div style={{ ...styles.statIcon, color: '#d97706' }}>
+                            <i className="fas fa-microchip"></i>
+                        </div>
+                    </div>
+                    <div style={{ ...styles.statChange, color: '#d97706' }}>
+                        <i className="fas fa-arrow-up"></i> +2% desde la semana pasada
+                    </div>
                 </div>
             </div>
 
-            {/* Clientes - VERDE */}
-            <div style={styles.statCard('#d1fae5')}>
-                <div style={styles.statHeader}>
-                    <div>
-                        <div style={styles.statLabel}>Clientes Registrados</div>
-                        <div style={{ ...styles.statNumber, color: '#059669' }}>{estadisticas.total_clientes}</div>
-                    </div>
-                    <div style={{ ...styles.statIcon, color: '#059669' }}>
-                        <i className="fas fa-users"></i>
-                    </div>
-                </div>
-                <div style={{ ...styles.statChange, color: '#059669' }}>
-                    <i className="fas fa-arrow-up"></i> +8% desde la semana pasada
-                </div>
+            {/* ÓRDENES RECIENTES */}
+            <div style={styles.sectionHeader}>
+                <span style={styles.sectionTitle}>
+                    <i className="fas fa-clock" style={{ marginRight: '8px' }}></i>
+                    Órdenes Recientes
+                </span>
             </div>
 
-            {/* Técnicos - MORADO */}
-            <div style={styles.statCard('#ede9fe')}>
-                <div style={styles.statHeader}>
-                    <div>
-                        <div style={styles.statLabel}>Técnicos Activos</div>
-                        <div style={{ ...styles.statNumber, color: '#7c3aed' }}>{estadisticas.tecnicos_activos}</div>
-                    </div>
-                    <div style={{ ...styles.statIcon, color: '#7c3aed' }}>
-                        <i className="fas fa-user-cog"></i>
-                    </div>
-                </div>
-                <div style={{ ...styles.statChange, color: '#7c3aed' }}>
-                    <i className="fas fa-arrow-up"></i> +5% desde la semana pasada
-                </div>
-            </div>
-
-            {/* Repuestos - NARANJA */}
-            <div style={styles.statCard('#fef3c7')}>
-                <div style={styles.statHeader}>
-                    <div>
-                        <div style={styles.statLabel}>Repuestos en Stock</div>
-                        <div style={{ ...styles.statNumber, color: '#d97706' }}>{estadisticas.stock_repuestos}</div>
-                    </div>
-                    <div style={{ ...styles.statIcon, color: '#d97706' }}>
-                        <i className="fas fa-microchip"></i>
-                    </div>
-                </div>
-                <div style={{ ...styles.statChange, color: '#d97706' }}>
-                    <i className="fas fa-arrow-up"></i> +2% desde la semana pasada
-                </div>
-            </div>
-        </div>
-
-        {/* ÓRDENES RECIENTES */}
-        <div style={styles.sectionHeader}>
-            <span style={styles.sectionTitle}>
-                <i className="fas fa-clock" style={{ marginRight: '8px' }}></i>
-                Órdenes Recientes
-            </span>
-        </div>
-
-        <div style={styles.tableContainer}>
-            <table style={styles.table}>
-                <thead>
-                    <tr>
-                        <th style={styles.th}>ID</th>
-                        <th style={styles.th}>Cliente</th>
-                        <th style={styles.th}>Equipo</th>
-                        <th style={styles.th}>Estado</th>
-                        <th style={styles.th}>Total</th>
-                        <th style={styles.th}>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {ordenesRecientes.length > 0 ? (
-                        ordenesRecientes.map((orden) => (
-                            <tr key={orden.id_orden}>
-                                <td style={styles.td}><strong>#{orden.id_orden}</strong></td>
-                                <td style={styles.td}>{orden.cliente_nombre || 'N/A'}</td>
-                                <td style={styles.td}>{orden.marca} {orden.modelo}</td>
-                                <td style={styles.td}>
-                                    <span style={styles.statusBadge(orden.estado)}>
-                                        {estadosTexto[orden.estado] || orden.estado}
-                                    </span>
-                                </td>
-                                <td style={styles.td}><strong>${Number(orden.total).toLocaleString()}</strong></td>
-                                <td style={styles.td}>
-                                    <button style={{ background: 'none', border: 'none', color: '#4f46e5', cursor: 'pointer' }}>
-                                        <i className="fas fa-eye"></i>
-                                    </button>
-                                    <button style={{ background: 'none', border: 'none', color: '#059669', cursor: 'pointer', marginLeft: '8px' }}>
-                                        <i className="fas fa-edit"></i>
-                                    </button>
+            <div style={styles.tableContainer}>
+                <table style={styles.table}>
+                    <thead>
+                        <tr>
+                            <th style={styles.th}>ID</th>
+                            <th style={styles.th}>Cliente</th>
+                            <th style={styles.th}>Equipo</th>
+                            <th style={styles.th}>Estado</th>
+                            <th style={styles.th}>Total</th>
+                            <th style={styles.th}>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {ordenesRecientes.length > 0 ? (
+                            ordenesRecientes.map((orden) => (
+                                <tr key={orden.id_orden}>
+                                    <td style={styles.td}><strong>#{orden.id_orden}</strong></td>
+                                    <td style={styles.td}>{orden.cliente_nombre || 'N/A'}</td>
+                                    <td style={styles.td}>{orden.marca} {orden.modelo}</td>
+                                    <td style={styles.td}>
+                                        <span style={styles.statusBadge(orden.estado)}>
+                                            {estadosTexto[orden.estado] || orden.estado}
+                                        </span>
+                                    </td>
+                                    <td style={styles.td}><strong>${Number(orden.total).toLocaleString()}</strong></td>
+                                    <td style={styles.td}>
+                                        <button style={{ background: 'none', border: 'none', color: '#4f46e5', cursor: 'pointer' }}>
+                                            <i className="fas fa-eye"></i>
+                                        </button>
+                                        <button style={{ background: 'none', border: 'none', color: '#059669', cursor: 'pointer', marginLeft: '8px' }}>
+                                            <i className="fas fa-edit"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="6" style={{ ...styles.td, textAlign: 'center', color: '#94a3b8' }}>
+                                    <i className="fas fa-inbox" style={{ marginRight: '8px' }}></i>
+                                    No hay órdenes registradas
                                 </td>
                             </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan="6" style={{ ...styles.td, textAlign: 'center', color: '#94a3b8' }}>
-                                <i className="fas fa-inbox" style={{ marginRight: '8px' }}></i>
-                                No hay órdenes registradas
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-        </div>
+                        )}
+                    </tbody>
+                </table>
+            </div>
 
-        {/* GRÁFICOS */}
-        <div style={styles.bottomGrid}>
-            <div style={styles.cardCustom}>
-                <div style={styles.cardTitle}>
-                    <i className="fas fa-chart-pie" style={{ marginRight: '8px' }}></i>
-                    Órdenes por Estado
-                </div>
-                <div style={styles.chartWrapper}>
-                    <div style={styles.chartContainer}>
-                        <Doughnut data={doughnutData} options={doughnutOptions} />
+            {/* GRÁFICOS */}
+            <div style={styles.bottomGrid}>
+                {/* GRÁFICO 1: DONA */}
+                <div style={styles.cardCustom}>
+                    <div style={styles.cardTitle}>
+                        <i className="fas fa-chart-pie" style={{ marginRight: '8px' }}></i>
+                        Órdenes por Estado
                     </div>
-                    <div style={styles.chartStats}>
-                        {datosGrafico.labels.map((label, index) => {
-                            const colores = ['#f59e0b', '#3b82f6', '#ef4444', '#10b981'];
-                            return (
-                                <div key={index} style={styles.chartStatItem}>
-                                    <div style={{ ...styles.chartStatNumber, color: colores[index] }}>
-                                        {datosGrafico.values[index]}
+                    <div style={styles.chartWrapper}>
+                        <div style={styles.chartContainer}>
+                            <Doughnut data={doughnutData} options={doughnutOptions} />
+                        </div>
+                        <div style={styles.chartStats}>
+                            {datosGrafico.labels.map((label, index) => {
+                                const colores = ['#f59e0b', '#3b82f6', '#ef4444', '#10b981'];
+                                return (
+                                    <div key={index} style={styles.chartStatItem}>
+                                        <div style={{ ...styles.chartStatNumber, color: colores[index] }}>
+                                            {datosGrafico.values[index]}
+                                        </div>
+                                        <div style={styles.chartStatLabel}>{label}</div>
                                     </div>
-                                    <div style={styles.chartStatLabel}>{label}</div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            </div>
-
-            <div style={styles.cardCustom}>
-                <div style={styles.cardTitle}>
-                    <i className="fas fa-chart-bar" style={{ marginRight: '8px' }}></i>
-                    Resumen de Órdenes
-                </div>
-                <div style={styles.chartWrapper}>
-                    <div style={styles.chartContainer}>
-                        <Bar data={barData} options={barOptions} />
-                    </div>
-                    <div style={styles.chartStats}>
-                        <div style={styles.chartStatItem}>
-                            <div style={{ ...styles.chartStatNumber, color: '#3b82f6' }}>7</div>
-                            <div style={styles.chartStatLabel}>Últimos 7 días</div>
+                                );
+                            })}
                         </div>
-                        <div style={styles.chartStatItem}>
-                            <div style={{ ...styles.chartStatNumber, color: '#10b981' }}>18</div>
-                            <div style={styles.chartStatLabel}>Total</div>
+                    </div>
+                </div>
+
+                {/* GRÁFICO 2: BARRAS */}
+                <div style={styles.cardCustom}>
+                    <div style={styles.cardTitle}>
+                        <i className="fas fa-chart-bar" style={{ marginRight: '8px' }}></i>
+                        Resumen de Órdenes
+                    </div>
+                    <div style={styles.chartWrapper}>
+                        <div style={styles.chartContainer}>
+                            <Bar data={barData} options={barOptions} />
+                        </div>
+                        <div style={styles.chartStats}>
+                            <div style={styles.chartStatItem}>
+                                <div style={{ ...styles.chartStatNumber, color: '#3b82f6' }}>7</div>
+                                <div style={styles.chartStatLabel}>Últimos 7 días</div>
+                            </div>
+                            <div style={styles.chartStatItem}>
+                                <div style={{ ...styles.chartStatNumber, color: '#10b981' }}>18</div>
+                                <div style={styles.chartStatLabel}>Total</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-);
+    );
 }
 
 export default Dashboard;

@@ -8,7 +8,7 @@
 // 1. CONFIGURACIÓN
 // ============================================
 
-require_once 'config.php';
+require_once __DIR__ . '/config.php';
 require_once '../models/Usuario.php';
 
 $usuarioModel = new Usuario();

@@ -147,7 +147,7 @@ function Sidebar() {
                 <Link to="/ordenes" style={{ ...styles.link, ...(isActive('/ordenes') === 'active' ? styles.linkActive : {}) }}>
                     <i className="fas fa-clipboard-list" style={styles.linkIcon}></i>
                     Órdenes
-                    <span style={styles.linkBadge}>4</span>
+
                 </Link>
 
                 <Link to="/reportes" style={{ ...styles.link, ...(isActive('/reportes') === 'active' ? styles.linkActive : {}) }}>
