@@ -71,7 +71,7 @@ function Dashboard() {
                 stock_repuestos: stockTotal
             });
 
-            // Últimas 5 órdenes
+
             setOrdenesRecientes(ordenes.slice(0, 5));
             setLoading(false);
         } catch (error) {
@@ -80,10 +80,6 @@ function Dashboard() {
         }
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('usuario');
-        window.location.href = '/';
-    };
 
     const estadosTexto = {
         'en_diagnostico': 'En diagnóstico',
@@ -302,6 +298,35 @@ function Dashboard() {
                 color: badge.color
             };
         },
+        // ===== BOTONES MODERNOS (IGUAL QUE EN CLIENTES) =====
+        btnSuccess: {
+            background: '#10b981',
+            color: 'white',
+            border: 'none',
+            padding: '8px 16px',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontSize: '13px',
+            marginRight: '6px',
+            transition: 'background 0.2s',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px'
+        },
+        btnInfo: {
+            background: '#3b82f6',
+            color: 'white',
+            border: 'none',
+            padding: '8px 16px',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontSize: '13px',
+            marginRight: '6px',
+            transition: 'background 0.2s',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px'
+        },
         bottomGrid: {
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
@@ -436,7 +461,7 @@ function Dashboard() {
                 </div>
             </div>
 
-            {/* ÓRDENES RECIENTES */}
+            {/* ===== ÓRDENES RECIENTES CON BOTONES FUNCIONALES ===== */}
             <div style={styles.sectionHeader}>
                 <span style={styles.sectionTitle}>
                     <i className="fas fa-clock" style={{ marginRight: '8px' }}></i>
@@ -470,12 +495,16 @@ function Dashboard() {
                                     </td>
                                     <td style={styles.td}><strong>${Number(orden.total).toLocaleString()}</strong></td>
                                     <td style={styles.td}>
-                                        <button style={{ background: 'none', border: 'none', color: '#4f46e5', cursor: 'pointer' }}>
-                                            <i className="fas fa-eye"></i>
-                                        </button>
-                                        <button style={{ background: 'none', border: 'none', color: '#059669', cursor: 'pointer', marginLeft: '8px' }}>
-                                            <i className="fas fa-edit"></i>
-                                        </button>
+                                        <a href={`/ordenes`} style={{ textDecoration: 'none' }}>
+                                            <button style={styles.btnInfo} title="Ver orden">
+                                                <i className="fas fa-eye"></i> Ver
+                                            </button>
+                                        </a>
+                                        <a href={`/ordenes`} style={{ textDecoration: 'none' }}>
+                                            <button style={styles.btnSuccess} title="Editar orden">
+                                                <i className="fas fa-pen"></i> Editar
+                                            </button>
+                                        </a>
                                     </td>
                                 </tr>
                             ))
@@ -493,7 +522,7 @@ function Dashboard() {
 
             {/* GRÁFICOS */}
             <div style={styles.bottomGrid}>
-                {/* GRÁFICO 1: DONA */}
+
                 <div style={styles.cardCustom}>
                     <div style={styles.cardTitle}>
                         <i className="fas fa-chart-pie" style={{ marginRight: '8px' }}></i>
@@ -519,7 +548,7 @@ function Dashboard() {
                     </div>
                 </div>
 
-                {/* GRÁFICO 2: BARRAS */}
+
                 <div style={styles.cardCustom}>
                     <div style={styles.cardTitle}>
                         <i className="fas fa-chart-bar" style={{ marginRight: '8px' }}></i>
